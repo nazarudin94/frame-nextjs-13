@@ -1,5 +1,6 @@
-import './globals.css'
-
+import './globals.css';
+import Header from '../component/Navbar/Header';
+import Footer from '../component/Navbar/Footer';
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -8,7 +9,11 @@ export default function RootLayout({ children }) {
         head.jsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body>{children}</body>
+      <body className="flex flex-col min-h-screen">
+        <Header />
+        {children}
+        <Footer />
+      </body>
     </html>
-  )
+  );
 }

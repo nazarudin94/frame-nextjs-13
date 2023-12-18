@@ -1,5 +1,18 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { db } from '@/config/db';
 
-export default function handler(req, res) {
-  res.status(200).json({ name: 'John Doe' })
+export default async function handler(req, res) {
+  if (req.method !== 'GET') return res.status(405).end();
+  const resp = await db.raw(
+    `
+       select * from Food f 
+        `
+  );
+  const data = resp[0];
+  res.status(200).json({
+    status: 200,
+    success: true,
+    message: 'ok',
+    data: data,
+  });
 }
