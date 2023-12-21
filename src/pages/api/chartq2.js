@@ -5,7 +5,10 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end();
   const resp = await db.raw(
     `
-       select * from Food f 
+      SELECT product as label, SUM(unit_sold) AS total
+FROM penjualan
+GROUP BY product;
+
         `
   );
   const data = resp[0];

@@ -1,6 +1,6 @@
 import './globals.css';
-import Header from '../component/Navbar/Header';
-import Footer from '../component/Navbar/Footer';
+import Header from '../components/Navbar/Header';
+import Footer from '../components/Navbar/Footer';
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

@@ -4,7 +4,7 @@ export const db = require('knex')({
     host: 'localhost',
     port: 3306,
     user: 'dev',
-    password: 'P4sWor$!',
+    password: process.env.pass_db,
     database: 'asesment',
   },
 });
