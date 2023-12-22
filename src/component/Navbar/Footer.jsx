@@ -1,7 +1,9 @@
 const Page = () => {
   return (
-    <footer class="bg-red-700 mt-auto  shadow py-2  dark:bg-gray-800">
-      <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between"></div>
+    <footer class="bg-gray-900 text-white py-4">
+      <div class="container mx-auto px-4">
+        <h2 class="text-xl font-semibold">Footer</h2>
+      </div>
     </footer>
   );
 };

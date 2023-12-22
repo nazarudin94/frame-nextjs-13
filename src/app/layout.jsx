@@ -1,17 +1,17 @@
 import './globals.css';
 import Header from '../component/Navbar/Header';
 import Footer from '../component/Navbar/Footer';
+import Aside from '../component/Navbar/Aside';
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      {/*
-        <head /> will contain the components returned by the nearest parent
-        head.jsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
-      */}
       <head />
-      <body className="flex flex-col min-h-screen">
+      <body className="flex flex-col h-screen">
         <Header />
-        {children}
+        <div class="flex flex-1">
+          <Aside />
+          {children}
+        </div>
         <Footer />
       </body>
     </html>
