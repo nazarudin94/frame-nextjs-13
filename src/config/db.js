@@ -5,6 +5,6 @@ export const db = require('knex')({
     port: 3306,
     user: 'dev',
     password: 'P4sWor$!',
-    database: 'asesment',
+    database: 'madrasah',
   },
 });
