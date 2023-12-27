@@ -3,7 +3,7 @@ import { List } from '@phosphor-icons/react';
 
 import { useState } from 'react';
 const Page = () => {
-  const [open, setOpen] = useState(true);
+  // const [open, setOpen] = useState(true);
   const Menus = [
     { title: 'Dashboard' },
     { title: 'Data Siswa' },
@@ -31,9 +31,7 @@ const Page = () => {
                   className="text-gray-300 text-sm flex item-center gap-x-4 cursor-pointer p-2 hover:bg-light-white"
                 >
                   <List size={32} className={`cursor-pointer duration-500`} />
-                  <span
-                    className={`${!open && 'hidden'} origin-left duration-200`}
-                  >
+                  <span className={`origin-left duration-200`}>
                     {menu.title}
                   </span>
                 </li>
