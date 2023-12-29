@@ -11,7 +11,7 @@ const Page = () => {
   ];
   return (
     <>
-      <aside class="flex bg-gray-800 text-gray-300 w-64 flex-shrink-0">
+      <aside className="flex bg-gray-800 text-gray-300 w-64 flex-shrink-0">
         <div className="flex">
           <div className={`w-64 bg-slate-800 p-5 pt-8 duration-300 relative`}>
             {/* <button

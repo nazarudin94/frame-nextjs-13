@@ -2,10 +2,10 @@
 import { db } from '@/config/db';
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') return res.status(405).end();
+  if (req.method !== 'POST') return res.status(405).end();
   const resp = await db.raw(
     `
-       select * from user
+       select id,nama from role
         `
   );
   const data = resp[0];

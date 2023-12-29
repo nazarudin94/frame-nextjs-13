@@ -7,14 +7,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head />
-      <body className="flex flex-col h-screen">
-        {/* <Header /> */}
-        {/* <div class="flex flex-1"> */}
-        {/* <Aside /> */}
-        {children}
-        {/* </div> */}
-        {/* <Footer /> */}
-      </body>
+      <body className="flex flex-col h-screen">{children}</body>
     </html>
   );
 }

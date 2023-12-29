@@ -6,9 +6,9 @@ export default function ViewLayout({ children }) {
   return (
     <div className="flex flex-col h-screen">
       <Header />
-      <div class="flex flex-1">
+      <div className="flex flex-1">
         <Aside />
-        <main class="flex-1 p-4">{children}</main>
+        <main className="flex-1 p-4">{children}</main>
       </div>
       <Footer />
     </div>
