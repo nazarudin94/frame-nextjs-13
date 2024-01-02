@@ -3,8 +3,8 @@ export const db = require('knex')({
   connection: {
     host: 'localhost',
     port: 3306,
-    user: 'dev',
-    password: 'P4sWor$!',
-    database: 'madrasah',
+    user: process.env.user_db,
+    password: process.env.pass_db,
+    database: process.env.name_db,
   },
 });
