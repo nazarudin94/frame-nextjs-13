@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useState, Fragment } from 'react';
+import Swal from 'sweetalert2';
 import Table from '@/components/Table/Table';
+import { useEffect, useState, Fragment } from 'react';
 import CustomDialog from '@/components/Dialog/CustomDialog';
-// import { Dialog, Transition } from '@headlessui/react';
-import { Tag } from 'antd';
 
 const Page = () => {
   const [listUser, setListUser] = useState([]);
+  const [editDataId, setEditDataId] = useState('');
+
   let [isOpen, setIsOpen] = useState(false);
 
   const closeModal = () => {
@@ -18,11 +19,24 @@ const Page = () => {
     setIsOpen(true);
   };
   const fetchData = async () => {
-    const response = await fetch(`../api/user`);
-    const data = await response.json();
-    setListUser(data.data);
+    try {
+      const response = await fetch(`../api/user`, {
+        method: 'POST',
+      });
+      const data = await response.json();
+      setListUser(data.data);
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+    }
+  };
 
-    // setTopAnime(populerAnime);
+  const handleadd = () => {
+    setEditDataId('');
+    openModal();
+  };
+  const handleEdit = async (id) => {
+    setEditDataId(id);
+    openModal();
   };
 
   useEffect(() => {
@@ -31,16 +45,28 @@ const Page = () => {
 
   const dataSource = listUser.map((user) => ({
     key: user.id, // Adjust this based on the actual key in your data
-    name: user.nama,
+    firstname: user.firstname,
+    lastname: user.lastname,
+    username: user.username,
     password: user.password,
     status: user.status,
   }));
 
   const columns = [
     {
-      title: 'User',
-      dataIndex: 'name',
-      key: 'name',
+      title: 'Username',
+      dataIndex: 'username',
+      key: 'username',
+    },
+    {
+      title: 'First name',
+      dataIndex: 'firstname',
+      key: 'firstname',
+    },
+    {
+      title: 'Lastname',
+      dataIndex: 'lastname',
+      key: 'lastname',
     },
     {
       title: 'Status',
@@ -54,18 +80,14 @@ const Page = () => {
     },
     {
       title: 'Action',
-      key: 'action',
+      dataIndex: 'id',
+      key: 'id',
       render: (text, record) => (
         <span>
           <button
             type="button"
-            className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-          >
-            Delete
-          </button>
-          <button
-            type="button"
             className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            onClick={() => handleEdit(record.key)}
           >
             Edit
           </button>
@@ -81,70 +103,19 @@ const Page = () => {
           <button
             type="button"
             className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            onClick={openModal}
+            onClick={handleadd}
           >
             Add New
           </button>
         </div>
         <Table dataSource={dataSource} columns={columns} title={'List User'} />
       </>
-      <CustomDialog isOpen={isOpen} onClose={closeModal} />
-      {/* <>
-        <Transition appear show={isOpen} as={Fragment}>
-          <Dialog as="div" className="relative z-10" onClose={closeModal}>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0 bg-black/25" />
-            </Transition.Child>
-
-            <div className="fixed inset-0 overflow-y-auto">
-              <div className="flex min-h-full items-center justify-center p-4 text-center">
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
-                >
-                  <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg font-medium leading-6 text-gray-900"
-                    >
-                      Payment successful
-                    </Dialog.Title>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        Your payment has been successfully submitted. We’ve sent
-                        you an email with all of the details of your order.
-                      </p>
-                    </div>
-
-                    <div className="mt-4">
-                      <button
-                        type="button"
-                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        onClick={closeModal}
-                      >
-                        Got it, thanks!
-                      </button>
-                    </div>
-                  </Dialog.Panel>
-                </Transition.Child>
-              </div>
-            </div>
-          </Dialog>
-        </Transition>
-      </> */}
+      <CustomDialog
+        isOpen={isOpen}
+        onClose={closeModal}
+        fetchData={fetchData}
+        editId={editDataId}
+      />
     </>
   );
 };

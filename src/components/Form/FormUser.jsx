@@ -4,13 +4,25 @@ import { Field, Formik, Form, ErrorMessage } from 'formik';
 import Select from 'react-select';
 import * as Yup from 'yup';
 import Switch from 'react-switch';
+import Swal from 'sweetalert2';
 
-const FormComponent = ({ onClose }) => {
+const FormComponent = ({ onClose, fetchData, editId }) => {
   const [currentRole, setCurrentRole] = useState([]);
-  const [statuscek, setStatus] = useState(false);
-  const [status, setChecked] = useState(false);
   const [listRole, setListRole] = useState([]);
-  const fetchData = async () => {
+  const [editData, setEditData] = useState([]);
+  const [statuscek, setStatus] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setChecked] = useState(false);
+  const [initialFormValues, setInitialFormValues] = useState({
+    id: '',
+    username: '',
+    password: '',
+    firstname: '',
+    lastname: '',
+    role: '',
+  });
+
+  const getData = async () => {
     try {
       const response = await fetch(`../api/role`, {
         method: 'POST',
@@ -27,9 +39,97 @@ const FormComponent = ({ onClose }) => {
     }
   };
 
+  const handleModalClose = (resetForm) => {
+    resetForm();
+    onClose();
+  };
+
+  // insert unser
+  const handleSubmit = async (values, currentRole) => {
+    const payload = {
+      id: values.id,
+      username: values.username,
+      firstname: values.firstname,
+      lastname: values.lastname,
+      password: values.password,
+      roleOption: values.role,
+      status: status === true ? 1 : 0,
+    };
+    // console.log('payload', payload);
+    // console.log(selectedListeData.password);
+    const sessionPost = await fetch('../api/manage/user/insert', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Authorization: 'Bearer ' + token,
+      },
+      body: JSON.stringify(payload),
+    }).then((ret) => {
+      // console.log(ret.ok);
+      if (ret.ok) {
+        onClose();
+        fetchData();
+        const Info =
+          values?.id !== '' && values?.id !== undefined
+            ? 'User has been updated!'
+            : 'User has been added!';
+        Swal.fire(`${Info}`, '', 'success');
+        // setIsOnProcess(!isOnProcess);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          // text: 'Icon failed to insert, Something went wrong!',
+          text: ret.statusText,
+        });
+      }
+    });
+  };
+
+  const handleditData = async (editId) => {
+    if (editId) {
+      try {
+        const response = await fetch(`../api/manage/user/edit`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // Authorization: 'Bearer ' + token,
+          },
+          body: JSON.stringify({ id: editId }), // ubah menjadi objek dengan key 'id'
+        });
+
+        const data = await response.json();
+        setEditData(data.data);
+        setInitialFormValues({
+          id: data.data[0]?.id || '',
+          username: data.data[0]?.username || '',
+          password: data.data[0]?.password || '',
+          firstname: data.data[0]?.firstname || '',
+          lastname: data.data[0]?.lastname || '',
+          role: '',
+        });
+      } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+      }
+    } else {
+      setInitialFormValues({
+        id: '',
+        username: '',
+        password: '',
+        firstname: '',
+        lastname: '',
+        role: '',
+      });
+    }
+  };
+
   useEffect(() => {
-    fetchData();
+    getData();
   }, []);
+
+  useEffect(() => {
+    handleditData(editId);
+  }, [editId]);
 
   const UsernameSchema = Yup.object().shape({
     username: Yup.string()
@@ -60,6 +160,11 @@ const FormComponent = ({ onClose }) => {
     }
   };
 
+  const handleCancel = (resetForm) => {
+    // Mengosongkan nilai form saat tombol Cancel ditekan
+    resetForm();
+  };
+
   const SelectField = ({ options, currentValue, field, form }) => {
     return (
       <Select
@@ -78,19 +183,19 @@ const FormComponent = ({ onClose }) => {
 
   return (
     <Formik
-      initialValues={{
-        username: '',
-        password: '',
-        firstname: '',
-        lastname: '',
-      }}
+      enableReinitialize={true}
+      initialValues={initialFormValues}
       validationSchema={UsernameSchema}
       onSubmit={(values) => {
-        // same shape as initial values
-        console.log(values);
+        // console.log(values);
+        setIsSubmitting(false);
+        // console.log(currentRole.value != undefined ? 'yy' : 'xx');
+        if (currentRole.value != undefined) {
+          handleSubmit(values); // Panggil handleSubmit jika currentRole.length > 0
+        }
       }}
     >
-      {({ errors, touched }) => (
+      {({ values, resetForm, errors, touched, isSubmitting, formik }) => (
         <Form>
           <div className="flex gap-2 ">
             <div>
@@ -102,8 +207,8 @@ const FormComponent = ({ onClose }) => {
               </label>
               <div className="mt-2">
                 <Field
-                  type="firstname"
-                  name="firstname"
+                  type="text"
+                  name={'firstname'}
                   id="firstname"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-2"
                   placeholder="firstname"
@@ -122,7 +227,7 @@ const FormComponent = ({ onClose }) => {
               </label>
               <div className="mt-2">
                 <Field
-                  type="lastname"
+                  type="text"
                   name="lastname"
                   id="lastname"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-2"
@@ -186,7 +291,7 @@ const FormComponent = ({ onClose }) => {
               </label>
               <div className="mt-2">
                 <Field
-                  type="role"
+                  type="text"
                   name="role"
                   options={options}
                   currentValue={currentRole}
@@ -194,9 +299,13 @@ const FormComponent = ({ onClose }) => {
                   id="role"
                   placeholder="role"
                 />
-                {errors.role && touched.role ? (
-                  <div className="text-red-600">{errors.role}</div>
-                ) : null}
+                {isSubmitting && currentRole.length === 0 ? (
+                  <div className="error text-red-500 text-sm">
+                    role ubis is required
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
             </div>
             <div>
@@ -265,7 +374,7 @@ const FormComponent = ({ onClose }) => {
               <button
                 type="button"
                 className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                onClick={onClose}
+                onClick={() => handleModalClose(resetForm)}
               >
                 Cancle
               </button>

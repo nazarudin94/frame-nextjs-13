@@ -1,14 +1,8 @@
-import { Dialog, FocusTrap, Fragment, Transition } from '@headlessui/react';
 import { Button, Modal } from 'antd';
 import React from 'react';
 import Select from 'react-select';
 import FormComponent from '@/components/Form/FormUser';
-const Page = ({ isOpen, onClose }) => {
-  const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' },
-  ];
+const Page = ({ isOpen, onClose, fetchData, editId }) => {
   return (
     <Modal
       title="Add New User"
@@ -17,7 +11,7 @@ const Page = ({ isOpen, onClose }) => {
       onCancel={onClose}
       footer={null}
     >
-      <FormComponent onClose={onClose} />
+      <FormComponent onClose={onClose} fetchData={fetchData} editId={editId} />
     </Modal>
   );
 };
